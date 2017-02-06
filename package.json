@@ -1,0 +1,22 @@
+{
+  "name": "steamgroupbot",
+  "version": "0.1.0",
+  "description": "",
+  "homepage": "https://github.com/jarzon/steamgroupbot",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jarzon/steamgroupbot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jarzon/steamgroupbot/issues"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "steamcommunity": "3.30.*",
+    "fast-levenshtein": "2.0.*"
+  },
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "bin": { "sgbot" : "./bot.js" }
+}
