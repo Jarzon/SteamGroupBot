@@ -1,7 +1,12 @@
-var assert = require('assert');
+var chai = require('chai');
+var assert = chai.assert;    // Using Assert style
+var expect = chai.expect;    // Using Expect style
+var should = chai.should();  // Using Should style
+
 var Spam = require('../src/spam.js');
 
 var commentsOutput = [];
+var disabledTimer = function(callback, time) {};
 
 function addComment(authorName, authorId, date, commentId, text) {
     commentsOutput.push({
@@ -17,9 +22,10 @@ function delay(callback) {
     setTimeout(callback, 5);
 }
 
-var group = {};
-group.getAllComments = (from, count, callback) => {
-    callback(null, commentsOutput);
+var group = {
+    getAllComments: (from, count, callback) => {
+        callback(null, commentsOutput);
+    }
 };
 
 var config = {
@@ -32,20 +38,21 @@ var config = {
     spamMessageDiff: 10, // Maximum number of letters that can differ between two comments to consider them as the same spam message
     spamLookRate: 1
 };
+var spam;
 
 beforeEach(() => {
     commentsOutput = [];
+
+    spam = new Spam(config, group, disabledTimer);
 });
 
 describe('Spam', () => {
     describe('#loop()', () => {
 
-        var spam = new Spam(config, group);
-
-        it('should add comments in commentsDB', (done) => {
+        it('should add a comment with a link in commentsDB', (done) => {
             addComment("Master J", 0, new Date(), 123, 'Spam message <a href="asdf">link</a>');
 
-            spam.loop();
+            spam.detectSpam();
 
             delay(() => {
                 assert.equal(Object.keys(spam.commentsDB).length, 1);
