@@ -1,10 +1,7 @@
 "use strict";
 
 var fs = require('fs');
-var SteamCommunity = require('../node-steamcommunity/index.js');
 var levenshtein = require('fast-levenshtein');
-
-var config = require('./config.js');
 
 module.exports = class Spam {
 
@@ -99,6 +96,6 @@ module.exports = class Spam {
                     });
                 }
             });
-        }, 5000);
+        }, this.config.spamLookRate);
     }
 };

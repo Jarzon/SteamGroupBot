@@ -15,6 +15,13 @@
     "steamcommunity": "3.30.*",
     "fast-levenshtein": "2.0.*"
   },
+  "devDependencies": {
+    "chai": "3.5.*",
+    "mocha": "3.2.*"
+  },
+  "scripts": {
+    "test": "mocha test/test.html"
+  },
   "engines": {
     "node": ">=4.0.0"
   },
