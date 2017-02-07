@@ -55,7 +55,7 @@ module.exports = class Spam
                                 }
 
                                 // Add it in the related spam group or create a new group and stop the loop
-                                if(result > -1) {
+                                if(spamKey > -1) {
                                     this.spamDB[spamKey].push(newComment.commentId);
                                 } else {
                                     this.spamDB.push([
@@ -79,7 +79,7 @@ module.exports = class Spam
         for (let comment in this.commentsDB) {
             if(this.commentsDB.date < (new Date()).getTime() - this.config.spamHistoryLimit) {
                 delete this.commentsDB[comment];
-            } else break;
+            }
         }
 
         // Look at the spam DB and take actions

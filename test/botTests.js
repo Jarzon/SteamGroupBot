@@ -9,7 +9,7 @@ var commentsOutput = [];
 var disabledTimer = function(callback, time) {};
 
 function addComment(authorName, authorId, date, commentId, text) {
-    commentsOutput.push({
+    commentsOutput.unshift({
         authorName: authorName,
         authorId: authorId,
         date: date,
@@ -18,8 +18,17 @@ function addComment(authorName, authorId, date, commentId, text) {
     });
 }
 
+// Return a date in the past
+function getDate(time = 0) {
+    var date = new Date();
+
+    date.setTime(date.getTime() - time);
+
+    return date;
+}
+
 function delay(callback) {
-    setTimeout(callback, 5);
+    setTimeout(callback, 1);
 }
 
 var group = {
@@ -30,12 +39,12 @@ var group = {
 
 var config = {
     name: '',
-    password: '', // I don't recommend putting your password here, even more if you didn't enable 2 factors authentication
+    password: '',
     groupid: '',
-    spamTimeLimit: 5, // time between messages to be considered as spamming
-    spamHistoryLimit: 3600, // Time before the comments are removed from the database in minutes
-    spamCountLimit: 4, // Minimal number of message
-    spamMessageDiff: 10, // Maximum number of letters that can differ between two comments to consider them as the same spam message
+    spamTimeLimit: 5,
+    spamHistoryLimit: 3600,
+    spamCountLimit: 4,
+    spamMessageDiff: 10,
     spamLookRate: 1
 };
 var spam;
@@ -50,14 +59,36 @@ describe('Spam', () => {
     describe('#loop()', () => {
 
         it('should add a comment with a link in commentsDB', (done) => {
-            addComment("Master J", 0, new Date(), 123, 'Spam message <a href="asdf">link</a>');
+            addComment("Master J", 0, getDate(), 1, 'Spam message <a href="localhost">link</a>');
 
             spam.detectSpam();
 
-            delay(() => {
-                assert.equal(Object.keys(spam.commentsDB).length, 1);
-                done();
-            });
+            assert.equal(Object.keys(spam.commentsDB).length, 1);
+            done();
+
+        });
+
+        it('should add comments in the spamDB when both are identical', (done) => {
+            addComment("Master J", "MasterJibus", getDate(), 1, 'Spam message <a href="localhost">link</a>');
+            addComment("Master J", "MasterJibus", getDate(), 2, 'Spam message <a href="localhost">link</a>');
+
+            spam.detectSpam();
+
+            assert.equal(spam.spamDB.length, 1);
+            assert.equal(spam.spamDB[0].length, 2);
+            done();
+
+        });
+
+        it('should not add comments in the spamDB when both aren\'t identical', (done) => {
+            addComment("Master J", "MasterJibus", getDate(), 1, 'Spam message <a href="localhost">link</a>');
+            addComment("Master J", "MasterJibus", getDate(), 2, 'Test comment with a <a href="localhost">link</a>');
+
+            spam.detectSpam();
+
+            assert.equal(spam.spamDB.length, 0);
+            done();
+
         });
     });
 });
