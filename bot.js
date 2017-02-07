@@ -4,7 +4,7 @@ var SteamCommunity = require('../node-steamcommunity/index.js');
 var ReadLine = require('readline');
 var fs = require('fs');
 var levenshtein = require('fast-levenshtein');
-var Spam = require('src/spam.js');
+var Spam = require('./src/spam.js');
 
 var config = require('./config.js');
 
@@ -18,15 +18,7 @@ var rl = ReadLine.createInterface({
 var accountName = config.name;
 var password = config.password;
 
-if(password === '' ) {
-    rl.question("Password: ", function(pass) {
-        password = pass;
-
-        doLogin(accountName, password);
-    });
-} else {
-    doLogin(accountName, password);
-}
+doLogin(accountName, password);
 
 function doLogin(accountName, password, authCode, twoFactorCode, captcha) {
     community.login({
