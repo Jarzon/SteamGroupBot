@@ -1,21 +1,25 @@
 var assert = require('assert');
 var Spam = require('../src/spam.js');
 
-var commentsOutput = {};
+var commentsOutput = [];
 
 function addComment(authorName, authorId, date, commentId, text) {
-    commentsOutput[commentId] = {
+    commentsOutput.push({
         authorName: authorName,
         authorId: authorId,
         date: date,
         commentId: commentId,
         text: text
-    };
+    });
+}
+
+function delay(callback) {
+    setTimeout(callback, 5);
 }
 
 var group = {};
 group.getAllComments = (from, count, callback) => {
-    return callback(null, commentsOutput);
+    callback(null, commentsOutput);
 };
 
 var config = {
@@ -30,7 +34,7 @@ var config = {
 };
 
 beforeEach(() => {
-    commentsOutput = {};
+    commentsOutput = [];
 });
 
 describe('Spam', () => {
@@ -38,18 +42,15 @@ describe('Spam', () => {
 
         var spam = new Spam(config, group);
 
-        it('should ', (done) => {
-            addComment("Master J", "0", new Date(), 123, "Spam message");
+        it('should add comments in commentsDB', (done) => {
+            addComment("Master J", 0, new Date(), 123, 'Spam message <a href="asdf">link</a>');
 
             spam.loop();
 
-            setTimeout(() => {
-
-
-                assert.equal(spam.commentsDB, 1);
+            delay(() => {
+                assert.equal(Object.keys(spam.commentsDB).length, 1);
                 done();
-
-            }, 20);
+            });
         });
     });
 });

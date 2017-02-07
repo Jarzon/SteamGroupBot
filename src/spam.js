@@ -71,7 +71,7 @@ module.exports = class Spam {
 
             // Clean the array from too old comments
             for (let comment in this.commentsDB) {
-                if(commentsDB.date < timeLimit) {
+                if(this.commentsDB.date < timeLimit) {
                     delete this.commentsDB[comment];
                 } else break;
             }
