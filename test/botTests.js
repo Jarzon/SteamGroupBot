@@ -56,7 +56,7 @@ beforeEach(() => {
 });
 
 describe('Spam', () => {
-    describe('#loop()', () => {
+    describe('#detectSpam()', () => {
 
         it('should add a comment with a link in commentsDB', (done) => {
             addComment("Master J", 0, getDate(), 1, 'Spam message <a href="localhost">link</a>');
@@ -68,7 +68,7 @@ describe('Spam', () => {
 
         });
 
-        it('should add comments in the spamDB when both are identical', (done) => {
+        it('should add comments in the spamDB when both are similar', (done) => {
             addComment("Master J", "MasterJibus", getDate(), 1, 'Spam message <a href="localhost">link</a>');
             addComment("Master J", "MasterJibus", getDate(), 2, 'Spam message <a href="localhost">link</a>');
 
@@ -80,13 +80,27 @@ describe('Spam', () => {
 
         });
 
-        it('should not add comments in the spamDB when both aren\'t identical', (done) => {
+        it('should not add comments in the spamDB when both aren\'t similar', (done) => {
             addComment("Master J", "MasterJibus", getDate(), 1, 'Spam message <a href="localhost">link</a>');
             addComment("Master J", "MasterJibus", getDate(), 2, 'Test comment with a <a href="localhost">link</a>');
 
             spam.detectSpam();
 
             assert.equal(spam.spamDB.length, 0);
+            done();
+
+        });
+
+        it('should add a similar comment in a existing spam group', (done) => {
+            addComment("Master J", "MasterJibus", getDate(), 1, 'Spam message <a href="localhost">link</a>');
+            addComment("Master J", "MasterJibus", getDate(), 2, 'Spam message <a href="localhost">link</a> 2');
+
+            addComment("Master J", "MasterJibus", getDate(), 3, 'Spam message <a href="localhost">link</a> 3');
+
+            spam.detectSpam();
+
+            assert.equal(spam.spamDB.length, 1);
+            assert.equal(spam.spamDB[0].length, 3);
             done();
 
         });
