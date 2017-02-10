@@ -85,12 +85,8 @@ module.exports = class Spam
         for (let id in this.commentsDB) {
             var comment = this.commentsDB[id];
 
-            if(comment.date.getTime() < (new Date()).getTime() - this.config.spamHistoryLimit) {
-                delete this.commentsDB[comment.commentId];
-
-                //this.spamDB.forEach((group) => {
-                //    if(group.indexOf(comment.commentId)) delete this.commentsDB[comment];
-                //});
+            if(comment.date.getTime() < (new Date()).getTime() - (this.config.spamHistoryLimit * 1000)) {
+                delete this.commentsDB[id];
             }
         }
     }
@@ -104,12 +100,12 @@ module.exports = class Spam
 
                 group.forEach((id) => {
                     var comment = this.commentsDB[id];
-                    var time = this.commentsDB[id].date.getTime();
+                    var time = comment.date.getTime();
 
                     toDelete.push(id);
 
                     // Count comments that are in the same time span
-                    if((time - lastTime) <= this.config.spamTimeLimit) {
+                    if((time - lastTime) <= this.config.spamTimeLimit * 1000) {
                         count++;
 
 

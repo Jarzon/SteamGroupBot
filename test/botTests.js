@@ -22,7 +22,7 @@ function addComment(authorName, authorId, date, commentId, text) {
 function getDate(time = 0) {
     var date = new Date();
 
-    date.setTime(date.getTime() - time);
+    date.setTime(date.getTime() - time * 1000);
 
     return date;
 }
@@ -59,14 +59,11 @@ class GroupMock
 var group = new GroupMock();
 
 var config = {
-    name: '',
-    password: '',
-    groupid: '',
-    spamTimeLimit: 5 * 1000,
-    spamHistoryLimit: 360 * 1000,
+    spamTimeLimit: 5,
+    spamHistoryLimit: 360,
     spamCountLimit: 2,
     spamMessageDiff: 10,
-    spamLookRate: 1
+    spamLookRate: 0
 };
 var spam;
 
@@ -129,7 +126,7 @@ describe('Spam', () => {
 
     describe('#clearComments()', () => {
         it('should delete comments that are too old', (done) => {
-            var old = config.spamHistoryLimit + 1000;
+            var old = config.spamHistoryLimit + 10;
 
             addComment("Master J", "MasterJibus", getDate(old), 1, 'Lorem ipsum dolor sit amet, <a href="localhost">link</a>');
             addComment("Master J", "MasterJibus", getDate(old), 2, 'pri falli corrumpit ullamcorper id <a href="localhost">link</a>');
