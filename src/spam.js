@@ -21,11 +21,13 @@ module.exports = class Spam
 
 
         timer(() => {
-            this.detectSpam();
+            this.getGroupComments();
+            this.clearComments();
+            this.spamAction();
         }, this.config.spamLookRate);
     }
 
-    detectSpam()
+    getGroupComments()
     {
         this.group.getAllComments(0, 20, (err, comments) => {
 
@@ -40,6 +42,7 @@ module.exports = class Spam
                         for (let key in this.commentsDB) {
                             var commentRow = this.commentsDB[key];
 
+                            // Detect if there is similar text in the DB
                             if(levenshtein.get(newComment.text, commentRow.text) < (newComment.text.length / this.config.spamMessageDiff)) {
 
                                 // Search if the comment is already marked as spam
@@ -74,27 +77,47 @@ module.exports = class Spam
                 }
             }
         });
+    }
 
-        // Clean the array from too old comments
-        for (let comment in this.commentsDB) {
-            if(this.commentsDB.date < (new Date()).getTime() - this.config.spamHistoryLimit) {
-                delete this.commentsDB[comment];
+    // Delete comments that are too old
+    clearComments()
+    {
+        for (let id in this.commentsDB) {
+            var comment = this.commentsDB[id];
+
+            if(comment.date.getTime() < (new Date()).getTime() - this.config.spamHistoryLimit) {
+                delete this.commentsDB[comment.commentId];
+
+                //this.spamDB.forEach((group) => {
+                //    if(group.indexOf(comment.commentId)) delete this.commentsDB[comment];
+                //});
             }
         }
+    }
 
-        // Look at the spam DB and take actions
+    spamAction() {
         this.spamDB.forEach((group) => {
-            if(group.length > this.config.spamCountLimit) {
+            if(group.length >= this.config.spamCountLimit) {
                 var lastTime = 0;
                 var count = 0;
+                var toDelete = [];
+
                 group.forEach((id) => {
                     var comment = this.commentsDB[id];
                     var time = this.commentsDB[id].date.getTime();
+
+                    toDelete.push(id);
+
+                    // Count comments that are in the same time span
                     if((time - lastTime) <= this.config.spamTimeLimit) {
                         count++;
 
-                        if(count >= this.config.spamCountLimit) {
-                            console.log("Ban Ban BAN!");
+
+                        if(count == this.config.spamCountLimit) {
+
+                            toDelete.forEach((toDeleteId) => {
+                                this.group.deleteComment(toDeleteId);
+                            });
                         }
                     }
 
