@@ -11,8 +11,8 @@ module.exports = class Spam
         this.group = group;
         this.config = config;
 
-        this.commentsDB = {};
-        this.spamDB = [];
+        this.comments = {};
+        this.spams = [];
         this.lastId = 0;
 
         if(timer === undefined) {
@@ -39,8 +39,8 @@ module.exports = class Spam
 
                     if(newComment.text.match("<a")) {
 
-                        for (let key in this.commentsDB) {
-                            var commentRow = this.commentsDB[key];
+                        for (let key in this.comments) {
+                            var commentRow = this.comments[key];
 
                             // Detect if there is similar text in the DB
                             if(levenshtein.get(newComment.text, commentRow.text) < (newComment.text.length / this.config.spamMessageDiff)) {
@@ -48,7 +48,7 @@ module.exports = class Spam
                                 // Search if the comment is already marked as spam
                                 var n = 0;
                                 var spamKey = -1;
-                                for (let spamGroup of this.spamDB) {
+                                for (let spamGroup of this.spams) {
                                     if(spamGroup.indexOf(commentRow.commentId) > -1) {
                                         spamKey = n;
                                         break;
@@ -59,9 +59,9 @@ module.exports = class Spam
 
                                 // Add it in the related spam group or create a new group and stop the loop
                                 if(spamKey > -1) {
-                                    this.spamDB[spamKey].push(newComment.commentId);
+                                    this.spams[spamKey].push(newComment.commentId);
                                 } else {
-                                    this.spamDB.push([
+                                    this.spams.push([
                                         commentRow.commentId,
                                         newComment.commentId
                                     ]);
@@ -70,7 +70,7 @@ module.exports = class Spam
                             }
                         }
 
-                        this.commentsDB[newComment.commentId] = newComment;
+                        this.comments[newComment.commentId] = newComment;
                     }
 
                     this.lastId = newComment.commentId;
@@ -82,32 +82,31 @@ module.exports = class Spam
     // Delete comments that are too old
     clearComments()
     {
-        for (let id in this.commentsDB) {
-            var comment = this.commentsDB[id];
+        var now = (new Date()).getTime();
 
-            if(comment.date.getTime() < (new Date()).getTime() - (this.config.spamHistoryLimit * 1000)) {
-                delete this.commentsDB[id];
+        for (let id in this.comments) {
+            if(this.comments[id].date.getTime() < now - (this.config.spamHistoryLimit * 1000)) {
+                delete this.comments[id];
             }
         }
     }
 
     spamAction() {
-        this.spamDB.forEach((group) => {
+        this.spams.forEach((group) => {
             if(group.length >= this.config.spamCountLimit) {
                 var lastTime = 0;
                 var count = 0;
                 var toDelete = [];
 
                 group.forEach((id) => {
-                    var comment = this.commentsDB[id];
+                    var comment = this.comments[id];
                     var time = comment.date.getTime();
 
                     toDelete.push(id);
 
                     // Count comments that are in the same time span
-                    if((time - lastTime) <= this.config.spamTimeLimit * 1000) {
+                    if(time - lastTime <= this.config.spamTimeLimit * 1000) {
                         count++;
-
 
                         if(count == this.config.spamCountLimit) {
 
