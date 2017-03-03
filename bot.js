@@ -2,8 +2,6 @@
 
 var SteamCommunity = require('../node-steamcommunity/index.js');
 var ReadLine = require('readline');
-var fs = require('fs');
-var levenshtein = require('fast-levenshtein');
 var Spam = require('./src/spam.js');
 
 var config = require('./config.js');

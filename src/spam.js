@@ -41,7 +41,9 @@ module.exports = class Spam
 
                         for (let [id, commentRow] of this.comments) {
                             // Detect if there is similar text in the DB
-                            if(levenshtein.get(newComment.text, commentRow.text) < (newComment.text.length / this.config.spamMessageDiff)) {
+                            var diff = levenshtein.get(newComment.text, commentRow.text);
+
+                            if(diff < newComment.text.length / this.config.spamMessageDiff) {
 
                                 // Search if the comment is already marked as spam
                                 var n = 0;
@@ -68,7 +70,10 @@ module.exports = class Spam
                             }
                         }
 
-                        this.comments.set(newComment.commentId, newComment);
+                        // If the comments are identical, don't add it
+                        if(diff !== 0) {
+                            this.comments.set(newComment.commentId, newComment);
+                        }
                     }
 
                     this.lastId = newComment.commentId;
@@ -104,8 +109,6 @@ module.exports = class Spam
                 this.comments.delete(id);
                 diff--;
             }
-
-
         }
 
     }
