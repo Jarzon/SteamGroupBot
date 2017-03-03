@@ -70,10 +70,13 @@ module.exports = class Spam
                             }
                         }
 
-                        // If the comments are identical, don't add it
-                        if(diff !== 0) {
-                            this.comments.set(newComment.commentId, newComment);
+                        // If the comments are identical, don't add the comment text
+                        if(diff === 0) {
+                            newComment.text = '';
                         }
+
+                        newComment.deleted = false;
+                        this.comments.set(newComment.commentId, newComment);
                     }
 
                     this.lastId = newComment.commentId;
