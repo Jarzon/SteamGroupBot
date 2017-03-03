@@ -20,7 +20,7 @@
     "mocha": "3.2.*"
   },
   "scripts": {
-    "test": "mocha test/test.html"
+    "test": "mocha tests/test.html"
   },
   "engines": {
     "node": ">=4.0.0"

@@ -129,26 +129,10 @@ describe('Spam', () => {
 
             assert.equal(spam.comments.size, 2);
         });
-
-        it('should delete spam db entries of old comments', () => {
-            group.addComment("Name", "STEAMID", getDate(), 1, 'Spam message <a href="localhost">link</a>');
-            group.addComment("Name", "STEAMID", getDate(), 2, 'Spam message <a href="localhost">link</a> 2');
-
-            group.addComment("Name", "STEAMID", getDate(), 3, 'Spam message <a href="localhost">link</a> 3');
-
-            spam.getGroupComments();
-
-            spam.clearComments();
-
-            assert.equal(spam.comments.size, 3);
-
-            assert.equal(spam.spams.length, 2);
-            assert.equal(spam.spams[0].length, 1);
-        });
     });
 
     describe('#spamAction()', () => {
-        it('should delete spam comments that are within the config time span range', () => {
+        it('should delete spam comments that are within the config limit range', () => {
             group.addComment("Name", "STEAMID", getDate(), 1, 'Spam message <a href="localhost">link</a>');
             group.addComment("Name", "STEAMID", getDate(), 2, 'Spam message <a href="localhost">link</a> 2');
 
@@ -161,11 +145,26 @@ describe('Spam', () => {
 
             spam.spamAction();
 
+            assert.deepEqual(group.getDeleted(), [1, 2, 3]);
+        });
+
+        it('should not delete comments that have been already deleted', () => {
+            group.addComment("Name", "STEAMID", getDate(), 1, 'Spam message <a href="localhost">link</a>');
+            group.addComment("Name", "STEAMID", getDate(), 2, 'Spam message <a href="localhost">link</a> 2');
+
+            group.addComment("Name", "STEAMID", getDate(), 3, 'Spam message <a href="localhost">link</a> 3');
+
+            spam.getGroupComments();
+
+            assert.equal(spam.spams.length, 1);
+            assert.equal(spam.spams[0].length, 3);
+
+            spam.spamAction();
+            spam.spamAction();
+
             var deleted = group.getDeleted();
 
-            assert.equal(deleted[0], 1);
-            assert.equal(deleted[1], 2);
-            assert.equal(deleted[2], 3);
+            assert.equal(deleted.length, 3);
         });
     });
 });

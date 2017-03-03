@@ -116,29 +116,15 @@ module.exports = class Spam
     spamAction() {
         this.spams.forEach((group) => {
             if(group.length >= this.config.spamCountLimit) {
-                var lastTime = 0;
-                var count = 0;
                 var toDelete = [];
 
                 group.forEach((id) => {
                     var comment = this.comments.get(id);
-                    var time = comment.date.getTime();
 
-                    toDelete.push(id);
-
-                    // Count comments that are in the same time span
-                    if(time - lastTime <= this.config.spamTimeLimit * 1000) {
-                        count++;
-
-                        if(count == this.config.spamCountLimit) {
-
-                            toDelete.forEach((toDeleteId) => {
-                                this.group.deleteComment(toDeleteId);
-                            });
-                        }
+                    if(!comment.deleted) {
+                        this.group.deleteComment(id);
+                        comment.deleted = true;
                     }
-
-                    lastTime = time;
                 });
             }
         });
