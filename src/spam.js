@@ -11,7 +11,7 @@ module.exports = class Spam
         this.group = group;
         this.config = config;
 
-        this.comments = {};
+        this.comments = new Map();
         this.spams = [];
         this.lastId = 0;
 
@@ -39,9 +39,7 @@ module.exports = class Spam
 
                     if(newComment.text.match("<a")) {
 
-                        for (let key in this.comments) {
-                            var commentRow = this.comments[key];
-
+                        for (let [id, commentRow] of this.comments) {
                             // Detect if there is similar text in the DB
                             if(levenshtein.get(newComment.text, commentRow.text) < (newComment.text.length / this.config.spamMessageDiff)) {
 
@@ -70,7 +68,7 @@ module.exports = class Spam
                             }
                         }
 
-                        this.comments[newComment.commentId] = newComment;
+                        this.comments.set(newComment.commentId, newComment);
                     }
 
                     this.lastId = newComment.commentId;
@@ -82,13 +80,34 @@ module.exports = class Spam
     // Delete comments that are too old
     clearComments()
     {
-        var now = (new Date()).getTime();
+        var diff = this.comments.size - this.config.commentsHistoryLimit;
 
-        for (let id in this.comments) {
-            if(this.comments[id].date.getTime() < now - (this.config.spamHistoryLimit * 1000)) {
-                delete this.comments[id];
+        for (let [id, comment] of this.comments) {
+
+            if(diff <= 0) {
+                break;
             }
+
+            // Is the comment marked as spam
+            var n = 0;
+            var spamKey = -1;
+            for (let spamGroup of this.spams) {
+                if(spamGroup.indexOf(comment.commentId) > -1) {
+                    spamKey = n;
+                    break;
+                }
+
+                n++;
+            }
+
+            if(spamKey < 0) {
+                this.comments.delete(id);
+                diff--;
+            }
+
+
         }
+
     }
 
     spamAction() {
@@ -99,7 +118,7 @@ module.exports = class Spam
                 var toDelete = [];
 
                 group.forEach((id) => {
-                    var comment = this.comments[id];
+                    var comment = this.comments.get(id);
                     var time = comment.date.getTime();
 
                     toDelete.push(id);

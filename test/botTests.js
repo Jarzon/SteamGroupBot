@@ -60,7 +60,7 @@ var group = new GroupMock();
 
 var config = {
     spamTimeLimit: 5,
-    spamHistoryLimit: 360,
+    commentsHistoryLimit: 2,
     spamCountLimit: 2,
     spamMessageDiff: 10,
     spamLookRate: 0
@@ -81,7 +81,7 @@ describe('Spam', () => {
 
             spam.getGroupComments();
 
-            assert.equal(Object.keys(spam.comments).length, 1);
+            assert.equal(spam.comments.size, 1);
             done();
 
         });
@@ -126,28 +126,24 @@ describe('Spam', () => {
 
     describe('#clearComments()', () => {
         it('should delete comments that are too old', (done) => {
-            var old = config.spamHistoryLimit + 10;
-
-            addComment("Name", "STEAMID", getDate(old), 1, 'Lorem ipsum dolor sit amet, <a href="localhost">link</a>');
-            addComment("Name", "STEAMID", getDate(old), 2, 'pri falli corrumpit ullamcorper id <a href="localhost">link</a>');
+            addComment("Name", "STEAMID", getDate(), 1, 'Lorem ipsum dolor sit amet, <a href="localhost">link</a>');
+            addComment("Name", "STEAMID", getDate(), 2, 'pri falli corrumpit ullamcorper id <a href="localhost">link</a>');
 
             addComment("Name", "STEAMID", getDate(), 3, 'graece invidunt ex mel. <a href="localhost">link</a>');
 
             spam.getGroupComments();
 
-            assert.equal(Object.keys(spam.comments).length, 3);
+            assert.equal(spam.comments.size, 3);
 
             spam.clearComments();
 
-            assert.equal(Object.keys(spam.comments).length, 1);
+            assert.equal(spam.comments.size, 2);
             done();
         });
 
         it('should delete spam db entries of old comments', (done) => {
-            var old = config.spamHistoryLimit + 10;
-
-            addComment("Name", "STEAMID", getDate(old), 1, 'Spam message <a href="localhost">link</a>');
-            addComment("Name", "STEAMID", getDate(old), 2, 'Spam message <a href="localhost">link</a> 2');
+            addComment("Name", "STEAMID", getDate(), 1, 'Spam message <a href="localhost">link</a>');
+            addComment("Name", "STEAMID", getDate(), 2, 'Spam message <a href="localhost">link</a> 2');
 
             addComment("Name", "STEAMID", getDate(), 3, 'Spam message <a href="localhost">link</a> 3');
 
@@ -155,9 +151,9 @@ describe('Spam', () => {
 
             spam.clearComments();
 
-            assert.equal(Object.keys(spam.comments).length, 1);
+            assert.equal(spam.comments.size, 3);
 
-            assert.equal(spam.spams.length, 1);
+            assert.equal(spam.spams.length, 2);
             assert.equal(spam.spams[0].length, 1);
 
             done();
