@@ -1,6 +1,6 @@
 {
   "name": "steamgroupbot",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "homepage": "https://github.com/jarzon/steamgroupbot",
   "repository": {
@@ -12,7 +12,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "steamcommunity": "jarzon/node-steamcommunity",
+    "steamcommunity": "jarzon/node-steamcommunity#groupcomments",
     "fast-levenshtein": "2.0.*"
   },
   "devDependencies": {
