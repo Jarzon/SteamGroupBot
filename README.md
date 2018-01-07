@@ -12,12 +12,8 @@ For now it can only delete spam message.
 
 ## Installation
 
-And install the dependencies with npm
+Install the dependencies with npm
 
     npm update
-    
-Get the latest code using Git
-
-    git clone --depth 1 https://github.com/Jarzon/SteamGroupBot SteamGroupBot
 
 Then edit config.js to fit your needs.
