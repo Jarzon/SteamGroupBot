@@ -11,6 +11,15 @@
     "url": "https://github.com/jarzon/steamgroupbot/issues"
   },
   "license": "MIT",
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "bin": {
+    "sgbot" : "./bot.js"
+  },
+  "scripts": {
+    "test": "mocha tests/"
+  },
   "dependencies": {
     "steamcommunity": "jarzon/node-steamcommunity#groupcomments",
     "fast-levenshtein": "2.0.*"
@@ -18,12 +27,5 @@
   "devDependencies": {
     "chai": "3.5.*",
     "mocha": "3.2.*"
-  },
-  "scripts": {
-    "test": "mocha tests/test.html"
-  },
-  "engines": {
-    "node": ">=4.0.0"
-  },
-  "bin": { "sgbot" : "./bot.js" }
+  }
 }
