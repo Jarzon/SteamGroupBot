@@ -21,7 +21,7 @@
     "test": "mocha tests/"
   },
   "dependencies": {
-    "steamcommunity": "jarzon/node-steamcommunity#groupcomments",
+    "steamcommunity": "~3.34.",
     "fast-levenshtein": "2.0.*"
   },
   "devDependencies": {
