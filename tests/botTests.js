@@ -1,15 +1,15 @@
-var chai = require('chai');
-var assert = chai.assert;    // Using Assert style
-var expect = chai.expect;    // Using Expect style
-var should = chai.should();  // Using Should style
+let chai = require('chai');
+let assert = chai.assert;    // Using Assert style
+let expect = chai.expect;    // Using Expect style
+let should = chai.should();  // Using Should style
 
-var Spam = require('../src/spam.js');
+let Spam = require('../src/spam.js');
 
-var disabledTimer = function(callback, time) {};
+let disabledTimer = function(callback, time) {};
 
 // Return a date in the past
 function getDate(time = 0) {
-    var date = new Date();
+    let date = new Date();
 
     date.setTime(date.getTime() - time * 1000);
 
@@ -51,14 +51,14 @@ class GroupMock
 
     getDeleted()
     {
-        var output = this.deleted;
+        let output = this.deleted;
         this.deleted = [];
         return output;
     }
 }
 
-var spam, group;
-var config = {
+let spam, group;
+let config = {
     spamTimeLimit: 5,
     commentsHistoryLimit: 2,
     spamCountLimit: 2,
@@ -172,7 +172,7 @@ describe('Spam', () => {
             spam.spamAction();
             spam.spamAction();
 
-            var deleted = group.getDeleted();
+            let deleted = group.getDeleted();
 
             assert.equal(deleted.length, 3);
         });

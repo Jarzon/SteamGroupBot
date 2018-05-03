@@ -1,20 +1,20 @@
 "use strict";
 
-var SteamCommunity = require('../node-steamcommunity/index.js');
-var ReadLine = require('readline');
-var Spam = require('./src/spam.js');
+let SteamCommunity = require('../node-steamcommunity/index.js');
+let ReadLine = require('readline');
+let Spam = require('./src/spam.js');
 
-var config = require('./config.js');
+let config = require('./config.js');
 
-var community = new SteamCommunity();
+let community = new SteamCommunity();
 
-var rl = ReadLine.createInterface({
+let rl = ReadLine.createInterface({
     "input": process.stdin,
     "output": process.stdout
 });
 
-var accountName = config.name;
-var password = config.password;
+let accountName = config.name;
+let password = config.password;
 
 doLogin(accountName, password);
 
@@ -60,7 +60,7 @@ function doLogin(accountName, password, authCode, twoFactorCode, captcha) {
 
         console.log("Logged on!");
 
-        var gid = config.groupid;
+        let gid = config.groupid;
 
         community.getSteamGroup(gid, function(err, group) {
             if (err) {
@@ -68,7 +68,7 @@ function doLogin(accountName, password, authCode, twoFactorCode, captcha) {
                 process.exit(1);
             }
 
-            var spam = new Spam(config, group);
+            let spam = new Spam(config, group);
         });
 
     });

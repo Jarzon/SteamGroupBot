@@ -1,7 +1,7 @@
 "use strict";
 
-var fs = require('fs');
-var levenshtein = require('fast-levenshtein');
+let fs = require('fs');
+let levenshtein = require('fast-levenshtein');
 
 module.exports = class Spam
 {
@@ -30,8 +30,8 @@ module.exports = class Spam
     {
         this.group.getAllComments(0, 20, (err, comments) => {
 
-            for (var i = comments.length; i-- > 0;) {
-                var newComment = comments[i];
+            for (let i = comments.length; i-- > 0;) {
+                let newComment = comments[i];
 
                 // Stop if the comment is older that the last one we verified
                 if (newComment.commentId <= this.lastId) {
@@ -46,16 +46,16 @@ module.exports = class Spam
                 }
 
                 // Compare the new message with every message in the memory
-                for (var [id, commentRow] of this.comments) {
+                for (let [id, commentRow] of this.comments) {
                     // Detect if there is similar text in the DB
-                    var diff = levenshtein.get(newComment.text, commentRow.text);
+                    let diff = levenshtein.get(newComment.text, commentRow.text);
 
                     if (diff < newComment.text.length / this.config.spamMessageDiff) {
 
                         // Search if the comment is already marked as spam
-                        var n = 0;
-                        var spamKey = -1;
-                        for (var spamGroup of this.spams) {
+                        let n = 0;
+                        let spamKey = -1;
+                        for (let spamGroup of this.spams) {
                             if (spamGroup.indexOf(commentRow.commentId) > -1) {
                                 spamKey = n;
                                 break;
@@ -91,18 +91,18 @@ module.exports = class Spam
     // Remove old comments from memory
     clearComments()
     {
-        var diff = this.comments.size - this.config.commentsHistoryLimit;
+        let diff = this.comments.size - this.config.commentsHistoryLimit;
 
-        for (var [id, comment] of this.comments) {
+        for (let [id, comment] of this.comments) {
 
             if(diff <= 0) {
                 break;
             }
 
             // Is the comment marked as spam
-            var n = 0;
-            var spamKey = -1;
-            for (var spamGroup of this.spams) {
+            let n = 0;
+            let spamKey = -1;
+            for (let spamGroup of this.spams) {
                 if(spamGroup.indexOf(comment.commentId) > -1) {
                     spamKey = n;
                     break;
@@ -123,10 +123,10 @@ module.exports = class Spam
     spamAction() {
         this.spams.forEach((group) => {
             if(group.length >= this.config.spamCountLimit) {
-                var toDelete = [];
+                let toDelete = [];
 
                 group.forEach((id) => {
-                    var comment = this.comments.get(id);
+                    let comment = this.comments.get(id);
 
                     if(!comment.deleted) {
                         this.group.deleteComment(id);
