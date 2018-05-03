@@ -5,7 +5,6 @@ var levenshtein = require('fast-levenshtein');
 
 module.exports = class Spam
 {
-
     constructor(config, group, timer)
     {
         this.group = group;
@@ -34,63 +33,67 @@ module.exports = class Spam
             for (var i = comments.length; i-- > 0;) {
                 var newComment = comments[i];
 
-                // Look if its newer
-                if(newComment.commentId > this.lastId) {
+                // Stop if the comment is older that the last one we verified
+                if (newComment.commentId <= this.lastId) {
+                    continue;
+                }
 
-                    if(newComment.text.match("<a")) {
+                this.lastId = newComment.commentId;
 
-                        for (let [id, commentRow] of this.comments) {
-                            // Detect if there is similar text in the DB
-                            var diff = levenshtein.get(newComment.text, commentRow.text);
+                // Stop if config to detect spam with links only and there is no link in the comment
+                if (this.config.spamWithLinksOnly && newComment.text.match("<a") === null) {
+                    continue;
+                }
 
-                            if(diff < newComment.text.length / this.config.spamMessageDiff) {
+                // Compare the new message with every message in the memory
+                for (var [id, commentRow] of this.comments) {
+                    // Detect if there is similar text in the DB
+                    var diff = levenshtein.get(newComment.text, commentRow.text);
 
-                                // Search if the comment is already marked as spam
-                                var n = 0;
-                                var spamKey = -1;
-                                for (let spamGroup of this.spams) {
-                                    if(spamGroup.indexOf(commentRow.commentId) > -1) {
-                                        spamKey = n;
-                                        break;
-                                    }
+                    if (diff < newComment.text.length / this.config.spamMessageDiff) {
 
-                                    n++;
-                                }
-
-                                // Add it in the related spam group or create a new group and stop the loop
-                                if(spamKey > -1) {
-                                    this.spams[spamKey].push(newComment.commentId);
-                                } else {
-                                    this.spams.push([
-                                        commentRow.commentId,
-                                        newComment.commentId
-                                    ]);
-                                }
+                        // Search if the comment is already marked as spam
+                        var n = 0;
+                        var spamKey = -1;
+                        for (var spamGroup of this.spams) {
+                            if (spamGroup.indexOf(commentRow.commentId) > -1) {
+                                spamKey = n;
                                 break;
                             }
+
+                            n++;
                         }
 
-                        // If the comments are identical, don't add the comment text
-                        if(diff === 0) {
-                            newComment.text = '';
+                        // Add it in the related spam group or create a new group and stop the loop
+                        if (spamKey > -1) {
+                            this.spams[spamKey].push(newComment.commentId);
+                        } else {
+                            this.spams.push([
+                                commentRow.commentId,
+                                newComment.commentId
+                            ]);
                         }
-
-                        newComment.deleted = false;
-                        this.comments.set(newComment.commentId, newComment);
+                        break;
                     }
 
-                    this.lastId = newComment.commentId;
+                    // If the comments are identical, don't add the comment text
+                    if (diff === 0) {
+                        newComment.text = '';
+                    }
                 }
+
+                newComment.deleted = false;
+                this.comments.set(newComment.commentId, newComment);
             }
         });
     }
 
-    // Delete comments that are too old
+    // Remove old comments from memory
     clearComments()
     {
         var diff = this.comments.size - this.config.commentsHistoryLimit;
 
-        for (let [id, comment] of this.comments) {
+        for (var [id, comment] of this.comments) {
 
             if(diff <= 0) {
                 break;
@@ -99,7 +102,7 @@ module.exports = class Spam
             // Is the comment marked as spam
             var n = 0;
             var spamKey = -1;
-            for (let spamGroup of this.spams) {
+            for (var spamGroup of this.spams) {
                 if(spamGroup.indexOf(comment.commentId) > -1) {
                     spamKey = n;
                     break;
@@ -116,6 +119,7 @@ module.exports = class Spam
 
     }
 
+    // Delete comments that are marked as spam
     spamAction() {
         this.spams.forEach((group) => {
             if(group.length >= this.config.spamCountLimit) {

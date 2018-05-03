@@ -63,7 +63,8 @@ var config = {
     commentsHistoryLimit: 2,
     spamCountLimit: 2,
     spamMessageDiff: 10,
-    spamLookRate: 0
+    spamLookRate: 0,
+    spamWithLinksOnly: true
 };
 
 beforeEach(() => {
@@ -75,7 +76,15 @@ beforeEach(() => {
 describe('Spam', () => {
     describe('#getGroupComments()', () => {
 
-        it('should add a comment with a link in comments', () => {
+        it('shouldn\'t delete comment that don\'t contain a link when config spamWithLinksOnly is true', () => {
+            group.addComment("Name", "STEAMID", getDate(), 1, 'Spam message');
+
+            spam.getGroupComments();
+
+            assert.equal(spam.comments.size, 0);
+        });
+
+        it('should add a comment with a link in memory', () => {
             group.addComment("Name", "STEAMID", getDate(), 1, 'Spam message <a href="localhost">link</a>');
 
             spam.getGroupComments();
