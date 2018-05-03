@@ -28,7 +28,8 @@ class GroupMock
         this.deleted = [];
     }
 
-    addComment(authorName, authorId, date, commentId, text) {
+    addComment(authorName, authorId, date, commentId, text)
+    {
         this.commentsOutput.unshift({
             authorName: authorName,
             authorId: authorId,
@@ -82,7 +83,7 @@ describe('Spam', () => {
             assert.equal(spam.comments.size, 1);
         });
 
-        it('should add comments in the spams when both are similar', () => {
+        it('should mark comments as spam when both are similar', () => {
             group.addComment("Name", "STEAMID", getDate(), 1, 'Spam message <a href="localhost">link</a>');
             group.addComment("Name", "STEAMID", getDate(), 2, 'Spam message <a href="localhost">link</a>');
 
@@ -92,7 +93,7 @@ describe('Spam', () => {
             assert.equal(spam.spams[0].length, 2);
         });
 
-        it('should not add comments in the spams when both aren\'t similar', () => {
+        it('should not mark comments as spam when both aren\'t similar', () => {
             group.addComment("Name", "STEAMID", getDate(), 1, 'Spam message <a href="localhost">link</a>');
             group.addComment("Name", "STEAMID", getDate(), 2, 'Test comment with a <a href="localhost">link</a>');
 
@@ -115,7 +116,7 @@ describe('Spam', () => {
     });
 
     describe('#clearComments()', () => {
-        it('should delete comments that are too old', () => {
+        it('should remove comments from memory when they are too old', () => {
             group.addComment("Name", "STEAMID", getDate(), 1, 'Lorem ipsum dolor sit amet, <a href="localhost">link</a>');
             group.addComment("Name", "STEAMID", getDate(), 2, 'pri falli corrumpit ullamcorper id <a href="localhost">link</a>');
 
