@@ -21,8 +21,9 @@
     "test": "mocha tests/"
   },
   "dependencies": {
-    "steamcommunity": "~3.34.0",
-    "fast-levenshtein": "~2.0.6"
+    "steamcommunity": "~3.36.2",
+    "fast-levenshtein": "~2.0.6",
+    "brace-expansion": "~1.1.7"
   },
   "devDependencies": {
     "chai": "3.5.*",
