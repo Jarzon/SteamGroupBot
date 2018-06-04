@@ -25,7 +25,7 @@ module.exports = class Spam
             this.getGroupComments();
             this.clearComments();
             this.spamAction();
-        }, this.config.spamLookRate);
+        }, this.config.spamLookRate * 1000);
     }
 
     getGroupComments()
