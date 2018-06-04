@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ask</title>
+</head>
+<body>
+    <form>
+        <div id="question">Question: </div>
+        <input id="answer" name="answer" type="text">
+
+        <input type="submit" value="Submit" onclick="quit()">
+    </form>
+
+    <script>
+        function quit() {
+            var win = nw.Window.get();
+            win.close();
+        }
+    </script>
+</body>
+</html>

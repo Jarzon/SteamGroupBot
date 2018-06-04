@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Steam Group bot</title>
+</head>
+<body>
+<button onclick="openConfig()">Config</button>
+<button onclick="lauch(config.name, config.password)">Lauch</button>
+<div id="console">
+
+</div>
+    <script>
+        var config = require('./config.js');
+        var SteamCommunity = require('./node_modules/steamcommunity/index.js');
+        var Spam = require('./src/spam.js');
+        var community = new SteamCommunity();
+
+        if (config.groupid === '') {
+            openConfig();
+        }
+        else if(config.name === '') {
+            openConnection();
+        }
+
+        function lauch(accountName, password, authCode, twoFactorCode, captcha) {
+            community.login({
+                "accountName": accountName,
+                "password": password,
+                "authCode": authCode,
+                "twoFactorCode": twoFactorCode,
+                "captcha": captcha
+            }, function(err, sessionID, cookies, steamguard) {
+                if(err) {
+                    if(err.message === 'SteamGuardMobile') {
+                        ask("Steam Authenticator Code: ", function(code) {
+                            lauch(accountName, password, null, code);
+                        });
+
+                        return;
+                    }
+
+                    if(err.message === 'SteamGuard') {
+                        console.log("An email has been sent to your address at " + err.emaildomain);
+                        ask("Steam Guard Code: ", function(code) {
+                            lauch(accountName, password, code);
+                        });
+
+                        return;
+                    }
+
+                    if(err.message === 'CAPTCHA') {
+                        console.log(err.captchaurl);
+                        ask("CAPTCHA: ", function(captchaInput) {
+                            lauch(accountName, password, authCode, twoFactorCode, captchaInput);
+                        });
+
+                        return;
+                    }
+
+                    log(err);
+                    return;
+                }
+
+                log("Logged in Steam");
+
+                var gid = config.groupid;
+                var iGid = parseInt(gid); // TODO: do that in config window
+
+                if(gid == iGid) {
+                    gid = iGid;
+                }
+
+                community.getSteamGroup(gid, function(err, group) {
+                    if (err) {
+                        log(err);
+                    } else {
+                        log('Watching the group');
+
+                        var spam = new Spam(config, group, logger);
+                    }
+                });
+
+            });
+        }
+
+        function openConfig() {
+            nw.Window.open('app/config.html', {}, function(win) {
+                win.on('close', function() {
+                    config = require('./config.js');
+                    //openConnection();
+                    win.close(true);
+                });
+            });
+        }
+
+        function openConnection() {
+            nw.Window.open('app/connection.html', {}, function(win) {
+                win.on('close', function() {
+                    // Start the bot
+                    win.close(true);
+                });
+            });
+        }
+
+        function ask(question, callback) {
+            var mainWindow = nw.Window.get();
+
+            nw.Window.open('app/ask.html', {}, function(win) {
+                win.on('loaded', function() {
+                    win.window.document.querySelector('#question').innerHTML = question;
+                });
+
+                win.on('close', function() {
+                    callback(win.window.document.querySelector('#answer').value);
+                    win.close(true);
+                });
+            });
+        }
+
+
+
+        var logger = new class {
+            constructor() {
+                this.console = document.querySelector('#console');
+            }
+
+            log(message) {
+                this.console.innerHTML += message+'<br>';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Config</title>
+    <style>
+        label {
+            font-weight: bold;
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+    <form>
+        <div><label>Username: <input name="name" type="text"></label></div>
+        <div><label>Password: <input name="password" type="password"></label></div>
+
+        <div><label>Group id: <input name="groupid" type="text"></label></div>
+        <div><label>Comments history limit: <input name="commentsHistoryLimit" type="number"></label></div>
+        <div><label>Spam count limit: <input name="spamCountLimit" type="number" value="4"></label></div>
+        <div><label>Spam message difference: <input name="spamMessageDiff" type="number" value="10"></label></div>
+        <div><label>Spam look rate <input name="spamLookRate" type="number" value="60"></label></div>
+        <div><label>Spam with link only: <input name="spamWithLinksOnly" type="checkbox" checked></label></div>
+
+        <input type="submit" value="Save" onclick="save()">
+    </form>
+
+    <script>
+        var fs = require('fs');
+        var config = require('./config.js');
+
+        var inputs = document.querySelectorAll('input');
+
+        for(var input of inputs) {
+            if(input.name != '') input.value = config[input.name];
+        }
+        
+        function save() {
+            var inputs = document.querySelectorAll('input');
+
+            for(var input of inputs) {
+                if(input.name != '') {
+                    var value = input.value;
+
+                    if(input.type == 'number') {
+                        value = parseInt(value);
+                    }
+                    else if(input.type == 'checkbox') {
+                        value = (value == 'true');
+                    }
+
+                    config[input.name] = value;
+                }
+            }
+
+            fs.writeFile('app/config.js', 'module.exports = ' + JSON.stringify(config, null, 2) + ';', 'utf-8');
+
+            var win = nw.Window.get();
+            win.close();
+        }
+    </script>
+</body>
+</html>

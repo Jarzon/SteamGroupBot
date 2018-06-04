@@ -68,7 +68,7 @@ function doLogin(accountName, password, authCode, twoFactorCode, captcha) {
                 process.exit(1);
             }
 
-            let spam = new Spam(config, group);
+            let spam = new Spam(config, group, console);
         });
 
     });

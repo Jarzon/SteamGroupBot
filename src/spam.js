@@ -5,10 +5,11 @@ let levenshtein = require('fast-levenshtein');
 
 module.exports = class Spam
 {
-    constructor(config, group, timer)
+    constructor(config, group, logger, timer)
     {
         this.group = group;
         this.config = config;
+        this.logger = logger;
 
         this.comments = new Map();
         this.spams = [];
