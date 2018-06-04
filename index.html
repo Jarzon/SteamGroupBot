@@ -57,11 +57,11 @@
                         return;
                     }
 
-                    log(err);
+                    logger.log(err);
                     return;
                 }
 
-                log("Logged in Steam");
+                logger.log("Logged in Steam");
 
                 var gid = config.groupid;
                 var iGid = parseInt(gid); // TODO: do that in config window
@@ -72,9 +72,9 @@
 
                 community.getSteamGroup(gid, function(err, group) {
                     if (err) {
-                        log(err);
+                        logger.log(err);
                     } else {
-                        log('Watching the group');
+                        logger.log('Watching the group');
 
                         var spam = new Spam(config, group, logger);
                     }

@@ -21,6 +21,7 @@ module.exports = class Spam
 
 
         timer(() => {
+            this.logger.log('Fetching latest comments');
             this.getGroupComments();
             this.clearComments();
             this.spamAction();
@@ -68,12 +69,16 @@ module.exports = class Spam
                         // Add it in the related spam group or create a new group and stop the loop
                         if (spamKey > -1) {
                             this.spams[spamKey].push(newComment.commentId);
+                            this.logger.log('New comment marked as spam with id: '+newComment.commentId);
                         } else {
                             this.spams.push([
                                 commentRow.commentId,
                                 newComment.commentId
                             ]);
+
+                            this.logger.log('New comments marked as spam with id: ' + commentRow.commentId + ' and ' + newComment.commentId);
                         }
+
                         break;
                     }
 
@@ -132,6 +137,7 @@ module.exports = class Spam
                     if(!comment.deleted) {
                         this.group.deleteComment(id);
                         comment.deleted = true;
+                        this.logger.log('Deleted spam comment with id: '+ id);
                     }
                 });
             }
