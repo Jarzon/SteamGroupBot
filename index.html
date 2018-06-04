@@ -64,11 +64,6 @@
                 logger.log("Logged in Steam");
 
                 var gid = config.groupid;
-                var iGid = parseInt(gid); // TODO: do that in config window
-
-                if(gid == iGid) {
-                    gid = iGid;
-                }
 
                 community.getSteamGroup(gid, function(err, group) {
                     if (err) {

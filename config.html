@@ -84,6 +84,13 @@
                     else if(input.type == 'checkbox') {
                         value = (value == 'true');
                     }
+                    else if(input.name == 'groupid') {
+                        var gid = parseInt(value);
+
+                        if(value == gid) {
+                            value = gid;
+                        }
+                    }
 
                     config[input.name] = value;
                 }
