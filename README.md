@@ -1,15 +1,19 @@
 # Steam Group Bot
 
-A bot to moderate a steam group.
+A bot to moderate a Steam group.
 
-For now it only delete spam comments in the group homepage. It can detects spam even if the spammer change a few characters to bypass it.
-
-### [TODO](https://github.com/Jarzon/SteamGroupBot/issues)
+For now it delete spam comments in the group homepage, it won't ban users nor moderate group discussions. It can detects spam even if the spammer change come characters to try to bypass detection.
 
 ## Installation
 
-Install the dependencies with npm
+### Application
 
-    npm update
+Download the latest build [here](https://github.com/Jarzon/SteamGroupBot/releases)
 
-Then edit config.js to fit your needs.
+### CLI
+
+If you only want to use it in the command line you can get the latest version, with it dependencies, using npm.
+
+    npm install steamgroupbot
+
+Then manually edit config.js to fit your needs and launch the bot using `node cli.js`.
