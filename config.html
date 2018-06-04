@@ -3,23 +3,58 @@
 <head>
     <title>Config</title>
     <style>
+        div {
+            margin-top: 10px;
+
+        }
+
         label {
             font-weight: bold;
-            width: 150px;
+            display: block;
+        }
+
+        p {
+            color: #333;
+            font-size: 15px;
         }
     </style>
 </head>
 <body>
     <form>
-        <div><label>Username: <input name="name" type="text"></label></div>
-        <div><label>Password: <input name="password" type="password"></label></div>
+        <div><label for="name">Username</label> <input id="name" name="name" type="text"></div>
+        <div><label for="password">Password</label> <input id="password" name="password" type="password"></div>
 
-        <div><label>Group id: <input name="groupid" type="text"></label></div>
-        <div><label>Comments history limit: <input name="commentsHistoryLimit" type="number"></label></div>
-        <div><label>Spam count limit: <input name="spamCountLimit" type="number" value="4"></label></div>
-        <div><label>Spam message difference: <input name="spamMessageDiff" type="number" value="10"></label></div>
-        <div><label>Spam look rate <input name="spamLookRate" type="number" value="60"></label></div>
-        <div><label>Spam with link only: <input name="spamWithLinksOnly" type="checkbox" checked></label></div>
+
+        <div>
+            <label for="groupid">Group id:</label>
+            <input id="groupid" name="groupid" type="text">
+            <p>Either the group id or the custom URL</p>
+        </div>
+        <div>
+            <label for="commentsHistoryLimit">Comments history limit</label>
+            <input id="commentsHistoryLimit" name="commentsHistoryLimit" type="number">
+            <p>Number of comments that is kept in memory.</p>
+        </div>
+        <div>
+            <label for="spamCountLimit">Spam count limit</label>
+            <input id="spamCountLimit" name="spamCountLimit" type="number" value="4">
+            <p>How many comments that are alike can be spammed before and action is taken.</p>
+        </div>
+        <div>
+            <label for="spamMessageDiff">Spam message difference</label>
+            <input id="spamMessageDiff" name="spamMessageDiff" type="number" value="10">
+            <p>How many characters can be different between two message to count them as the same.</p>
+        </div>
+        <div>
+            <label for="spamLookRate">Spam look rate</label>
+            <input id="spamLookRate" name="spamLookRate" type="number" value="60"> seconds
+            <p>Every x seconds fetch the new comments.</p>
+        </div>
+        <div>
+            <label for="spamWithLinksOnly">Spam with link only</label>
+            <input id="spamWithLinksOnly" name="spamWithLinksOnly" type="checkbox" checked>
+            <p>Only moderate comments with links in them.</p>
+        </div>
 
         <input type="submit" value="Save" onclick="save()">
     </form>
