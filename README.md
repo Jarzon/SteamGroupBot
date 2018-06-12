@@ -8,7 +8,7 @@ For now it delete spam comments in the group homepage, it won't ban users nor mo
 
 ### Application
 
-Download the latest build [here](https://github.com/Jarzon/SteamGroupBot/releases)
+The app is made using [Nw.js](https://nwjs.io/). You can [download the latest build](https://github.com/Jarzon/SteamGroupBot/releases/download/v1.0.0-alpha/SGBot.zip).
 
 ### CLI
 
